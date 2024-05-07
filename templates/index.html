@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        /* Styles for the login page */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/background1.jpg');
+            /* Set your background image URL here */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-form h2 {
+            margin-top: 0;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form class="login-form" id="login-form">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript for handling the login form submission
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            // Get the username and password input values
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Here, you would normally handle the login logic such as making an API call
+            // For this example, we'll just log the values to the console
+            console.log('Username:', username);
+            console.log('Password:', password);
+            const credentials = {
+                username,
+                password
+            };
+
+            // You can replace the above console.log statements with your actual login logic
+
+            // Optionally, you could reset the form fields after login attempt
+            event.target.reset();
+            // window.location.href = "/menu/";
+            fetch(
+                "/signin/",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(credentials)
+                }
+            ).then(
+                response => {
+                    if (response.ok) {
+                        // console.log("Verification successful");
+                        window.location.href = "/menu/";
+                    } else {
+                        console.log("Password incorrect");
+                        // window.location.href = "/";
+                    }
+                    // console.log("Got response: ", response);
+                }
+            )
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .schedule {
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            background-color: rgba(70, 70, 70, 0.603);
+            border-radius: 1rem;
+
+        }
+
+        .upper {
+            display: grid;
+            grid-template-columns: 1fr;
+            background-color: inherit;
+            padding: 1rem;
+        }
+
+        .upper h1 {
+            grid-column: 1 / 3;
+            text-align: center;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            color: white;
+
+        }
+
+        .details {
+            background-color: inherit;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3px;
+        }
+
+        .details label {
+            margin: 0.3rem 0;
+            color: white;
+        }
+
+        .info {
+            /*background-color: black;*/
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: 1fr auto;
+        }
+
+        .info label {
+            grid-row: 1 / 3;
+            text-align: center;
+            padding: 0.5rem;
+            color: white;
+            display: grid;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upper textarea {
+            padding: 0.5rem;
+            font-size: medium;
+        }
+
+        .upper button {
+            margin: 0.40rem 0;
+            padding: 0.5rem;
+            background-color: #51ff00;
+            color: rgb(9, 73, 0);
+            font-size: large;
+            font: bold;
+            border: #adff87;
+            border-radius: 3px;
+        }
+
+        .upper button:hover {
+            opacity: 70%;
+            cursor: pointer;
+        }
+
+
+        .table {
+            height: 100%;
+            width: 100%;
+            background-color: white;
+        }
+
+        .entry {
+            padding: 2px;
+            display: grid;
+            grid-template-columns: 6rem 1fr;
+        }
+
+        .table table {
+            border-collapse: collapse;
+            /* Combine adjacent borders */
+            /*width: 100%;*/
+            /* Set table width to 100% */
+            /*margin-bottom: 20px;*/
+            border: 1px solid #ccc;
+            /* Add a border around the table */
+            /*background-color: gray;*/
+            overflow: auto;
+            padding: 0;
+            width: 100%;
+            opacity: 80%;
+        }
+
+
+
+        th,
+        td {
+            padding: 10px;
+            /* Add padding to table cells */
+            text-align: left;
+            /* Align text to the left */
+            border: 1px solid #ccc;
+            /* Add a border around each cell */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            /* Light gray background for headers */
+        }
+
+        /*table>tr:nth-child(2n+3) {
+            background-color: #ccc;
+        }*/
+
+        /*table>*:nth-child(1+n) {
+            background-color: black;
+        }*/
+        tr:hover {
+            background-color: rgb(184, 184, 184);
+        }
+    </style>
+</head>
+
+<body>
+    {% include "menu.html" %}
+    <div class="schedule">
+        <div class="upper">
+            <h1>Schedule</h1>
+            <div class="details">
+                <div class="entry">
+                    <label for="customer">Customer </label>
+                    <select name="customer" id="customer">
+                        {% for customer in customers %}
+                        <option value={{customer.id}}> {{customer.name}} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="entry">
+                    <label for="service">Service </label>
+                    <select name="service" id="service" onchange="updatePrice()">
+                        {% for service in services %}
+                        <option value={{service.id}} price={{service.price}}> {{ service.description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="entry">
+                    <label for="price">Price R$ </label>
+                    <input type="number" id="price" name="price" value={{services[0].price}}
+                        placeholder="Enter Value" />
+                </div>
+                <div class="entry">
+                    <label for="date">Date </label>
+                    <input type="text" id="date" name="date" placeholder="Enter Date" />
+                </div>
+                <div class="entry">
+                    <label for="hour">Hour </label>
+                    <input type="number" id="hour" name="hour" placeholder="Enter Hour" />
+                </div>
+            </div>
+            <div class="info">
+                <label for="details">Details</label>
+                <textarea type="text" id="details" name="details"></textarea>
+                <button id="btn-schedule" onclick="submit()">Schedule</button>
+            </div>
+        </div>
+        <div class="table">
+            <table>
+
+                <!-- Table headers (column names) -->
+                <tr>
+                    <th>Id</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Value</th>
+                    <th>Date</th>
+                    <th>Hour</th>
+                    <th>Observation</th>
+                </tr>
+                {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.id }}</td>
+                    <td>{{ schedule.customer.name}} </td>
+                    <td>{{ schedule.service.description }}</td>
+                    <td>{{ schedule.service.price }}</td>
+                    <td>{{ schedule.date }}</td>
+                    <td>{{ schedule.hour }}</td>
+                    <td>{{ schedule.details }}</td>
+                </tr>
+                {# <!-- First row of data -->
+                <tr>
+                    <td>1</td>
+                    <td>Alan Figueiredo</td>
+                    <td>Corte Degrade</td>
+                    <td>30.0</td>
+                    <td>14/07/2018</td>
+                    <td>09:30</td>
+                    <td></td>
+                </tr>
+
+                <!-- Second row of data -->
+                <tr>
+                    <td>2</td>
+                    <td>Paulo Ricardo</td>
+                    <td>Barba Desenhada</td>
+                    <td>40.0</td>
+                    <td>14/07/2018</td>
+                    <td>10:00</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Neymar Santos</td>
+                    <td>Corte Simples</td>
+                    <td>18.0</td>
+                    <td>14/07/2018</td>
+                    <td>10:30</td>
+                    <td></td>
+                </tr> #}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function updatePrice() {
+            let service_select = document.getElementById("service");
+            console.log("Found component: ", service_select);
+            let index = service_select.selectedIndex;
+            console.log("Found index: ", index);
+            let option = service_select.options[index];
+            console.log("Found option: ", option);
+            let price = option.getAttribute("price");
+            if (price) {
+                console.log("Updating price with: ", price);
+                document.getElementById("price").value = price;
+            }
+
+        }
+
+        function submit() {
+            //let customer_select = document.getElementById("customer").value;
+            let customer_select = document.getElementById("customer");
+            let customer_id = Number(customer_select.options[customer_select.selectedIndex].value);
+            // let service_select = document.getElementById("service").value;
+            let service_select = document.getElementById("service");
+            let service_id = Number(service_select.options[service_select.selectedIndex].value);
+            let price = Number(document.getElementById("price").value);
+            let date = document.getElementById("date").value;
+            let hour = Number(document.getElementById("hour").value);
+            let details = document.getElementById("details").value;
+
+            // pub struct Request {
+            //     customer_id: u32,
+            //     service_id: u32,
+            //     price: u32,
+            //     date: String,
+            //     hour: u32,
+            //     details: String,
+            // }
+            const request = {
+                customer_id,
+                service_id,
+                price,
+                date,
+                hour,
+                details
+            }
+            console.log("Sending: ", request);
+            fetch("/schedule/",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(request)
+                }
+            ).then(
+                response => {
+                    if (response.ok) {
+                        response.text().then((value) => console.log("Got:", value));
+                        //console.log("Got: ", response.json())
+                        window.location.reload();
+                    } else {
+                        response.text().then((value) => console.error("Error sending request: ", value))
+                        // console.error("Error sending request: ", response.json());
+                    }
+                }
+            )
+        }
+    </script>
+</body>
+
+</html>
